@@ -35,27 +35,6 @@ necessary logic to switch between the steps and convert the file via the API tha
 
        [https://medium.com/@aidan.hallett/securing-aws-s3-uploads-using-presigned-urls-aa821c13ae8d](https://medium.com/@aidan.hallett/securing-aws-s3-uploads-using-presigned-urls-aa821c13ae8d)
 
-        - Example from one of our other projects
-
-            ```python
-             def create_presigned_url(self, obj_name: str):
-                    try:
-                        response = self.s3.generate_presigned_url(
-                            "get_object",
-                            Params={"Bucket": self.bucket_name, "Key": obj_name},
-                            ExpiresIn=self.presigned_url_expiration,
-                        )
-            
-                        logger.info(
-                            f"Genrerated presigned URL, expires in {self.presigned_url_expiration} seconds"
-                        )
-                    except ClientError as e:
-                        logger.error(f"An error occurred while generating presigned URL: {e}")
-                        return None
-            
-                    return response
-            ```
-
     4. Returns the presigned S3 url to the client which allows the user to download the file (by opening the url in new
        tab)
 
@@ -69,3 +48,8 @@ necessary logic to switch between the steps and convert the file via the API tha
 - Uses unoserver to convert PowerPoint to PDF via docker compose
 - The logic of the front-end ideally should not rely on useEffect too much since it can be difficult to track what is
   happening
+- Tests
+- Use conventional commit message style: https://www.conventionalcommits.org/en/v1.0.0/
+- Lint your code
+- Keep commits clean
+- If you want to be really fancy you can add queuing with Celery

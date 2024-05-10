@@ -1,9 +1,6 @@
-# Slidespeak Webapp
+# SlideSpeak coding challenge -- Front end app
 
 ![slidespeak-banner-github](https://github.com/SlideSpeak/slidespeak-webapp/assets/5519740/8ea56893-3c7a-42ee-906c-01e5797287af)
-
-SlideSpeak allows you to chat with your PowerPoint slides. Upload any PowerPoint, Word or PDF file and ask questions
-about the content.
 
 SlideSpeak was built with:
 
@@ -11,17 +8,10 @@ Frontend:
 
 - [NextJS](https://nextjs.org/)
 - [TailwindCSS](https://tailwindcss.com/)
-- [React Chat Stream](https://github.com/XD2Sketch/react-chat-stream)
-
-The backend for this project is available
-here: [https://github.com/SlideSpeak/slidespeak-backend](https://github.com/SlideSpeak/slidespeak-backend)
 
 ## Requirements
 
 - Bun installed to use it as a package runner (https://bun.sh/).
-- Having the SlideSpeak backend up and running.
-
-See [here](https://github.com/SlideSpeak/slidespeak-backend) on how to setup the backend.
 
 ## Getting Started
 
