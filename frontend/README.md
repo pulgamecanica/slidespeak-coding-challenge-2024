@@ -40,7 +40,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 
 ## Docker
 
-If you rather, you can choose to run the bun server on a docker contaiers
+If you rather, you can choose to run the bun server on a docker container
 
 ```bash
 docker compose up --build
