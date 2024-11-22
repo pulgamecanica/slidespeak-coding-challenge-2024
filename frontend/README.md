@@ -35,3 +35,20 @@ bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser.
+
+--- 
+
+## Docker
+
+If you rather, you can choose to run the bun server on a docker contaiers
+
+```bash
+docker compose up --build
+```
+
+
+#### Run in detach mode:
+
+```bash
+docker compose up --build -d
+```
