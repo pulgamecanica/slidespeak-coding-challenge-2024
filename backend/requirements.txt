@@ -1,6 +1,5 @@
 fastapi
 uvicorn
-unoserver
 boto3
 python-multipart
 celery

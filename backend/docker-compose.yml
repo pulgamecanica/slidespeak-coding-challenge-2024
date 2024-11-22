@@ -5,16 +5,13 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - unoserver
       - redis
+    volumes:
+      - ./app:/app
     env_file: 
       - path: ".env"
         required: true
-
-  unoserver:
-    image: libreofficedocker/libreoffice-unoserver:3.19-9c28c22
-    ports:
-      - "2002:2002"
+    restart: always
 
   redis:
     image: redis:6.2

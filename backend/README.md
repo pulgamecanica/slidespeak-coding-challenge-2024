@@ -58,6 +58,20 @@ Now we know what the python script should look like.
 
 Instead of using the unzip tool we will use unoserver which is more appropiate and also suggested implicitly by the docker-compose providede challenge file.
 
+Fast API route:
+**POST** _/extract_
+
+- @params:
+	- file: file.pptx
+
+##### NOTE:
+	I am happy :D !!!
+	I learnt something new!
+	How to make a test with postman when a post requires a named file parameter.
+	You should go to postman and change the request to a post.
+	Then on the Body section choose form-data.
+	Then hover on the `Key` section and choose "File" on the dropdown.
+	Then you can put the key `file` and choose the file for the value.
 
 #### Structure
 
@@ -87,3 +101,4 @@ backend/
 - celery: Task queue system for parallel processing.
 - redis: Backend for Celery and message broker.
 - aiofiles: Asynchronous file I/O for FastAPI when saving uploaded files
+- watchgod: For file reloading
