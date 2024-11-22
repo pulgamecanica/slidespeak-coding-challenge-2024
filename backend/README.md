@@ -13,9 +13,7 @@ docker compose up --build
 ## Pulgamecanica walkthoguh
 
 
-### Analysis
-
-#### How Videos Are Stored in PowerPoint Files?
+### How Videos Are Stored in PowerPoint Files?
 
 	PowerPoint files with the .pptx extension are essentially ZIP archives that follow the Office Open XML standard. 
 
@@ -24,7 +22,7 @@ docker compose up --build
 
 ***
 
-#### How SlideSpeak Extracts Videos from .pptx Files
+### How SlideSpeak Extracts Videos from .pptx Files
 
     Treat .pptx as a ZIP Archive: Use unzip tool extract its contents.
 
@@ -56,8 +54,6 @@ As seen here: https://github.com/SlideSpeak/image-extractor-cli/blob/30c5ad96ffb
 
 Now we know what the python script should look like.
 
-Instead of using the unzip tool we will use unoserver which is more appropiate and also suggested implicitly by the docker-compose providede challenge file.
-
 Fast API route:
 **POST** _/extract_
 
@@ -73,7 +69,7 @@ Fast API route:
 	Then hover on the `Key` section and choose "File" on the dropdown.
 	Then you can put the key `file` and choose the file for the value.
 
-#### Structure
+### Structure
 
 We will use fastapi to create an endpoint where we can `post` pptx files and get a response appropiate for the desired output. (likely to be a ref. to the S3 bucket were we will store the videos)
 
@@ -95,10 +91,8 @@ backend/
 
 - fastapi: Framework for building the backend API.
 - uvicorn: ASGI server for running the FastAPI application.
-- unoserver: A tool for handling pptx files thorugh a server
 - boto3: AWS SDK for Python to interact with Amazon S3.
 - python-multipart: Required by FastAPI to handle file uploads.
 - celery: Task queue system for parallel processing.
 - redis: Backend for Celery and message broker.
 - aiofiles: Asynchronous file I/O for FastAPI when saving uploaded files
-- watchgod: For file reloading
