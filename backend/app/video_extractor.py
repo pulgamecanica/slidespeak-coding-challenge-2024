@@ -4,11 +4,15 @@ from celery import Celery
 import boto3
 from botocore.exceptions import NoCredentialsError
 
+# Redis Configuration
+REDIS_PORT = os.getenv("REDIS_PORT")
+
 # Setup Celery
 celery = Celery(
-    "tasks",
+    "extract_videos_task",
+    backend=f"redis://redis:6379/0",
     broker="redis://redis:6379/0",
-    backend="redis://redis:6379/0",
+
 )
 
 # S3 Configuration
@@ -44,9 +48,9 @@ def convert_pptx_with_unzip(pptx_file_path, output_dir):
         subprocess.run(unzip_command, check=True, shell=False)
     except subprocess.CalledProcessError as e:
         raise RuntimeError(f"Unzip conversion failed: {e}")
-    if not os.path.exists(output_dir):
-        raise RuntimeError(f"Unzip didnt provide the output file: {output_dir}")
-
+    finally:
+        if not os.path.exists(output_dir):
+            raise RuntimeError(f"Unzip didnt provide the output file: {output_dir}")
 
 
 def extract_videos_from_directory(input_dir):
@@ -84,35 +88,35 @@ def upload_to_s3(file_path, s3_key):
         raise RuntimeError(f"Error uploading to S3: {e}")
 
 
-# @celery.task
+@celery.task
 def extract_videos_task(file_path):
     """
     Celery task to extract videos from a PowerPoint file.
     """
     output_dir = f"{file_path.replace(' ', '')}_output"
-    try:
-        # Step 1: Convert the PowerPoint file to a ZIP-like structure using Unzip
-        convert_pptx_with_unzip(file_path, output_dir)
-
-        # Step 2: Extract videos from the converted directory
-        extracted_videos = extract_videos_from_directory(output_dir)
-        print("Extracted Videos", extracted_videos)
-
-        if not extracted_videos:
-            return {"message": "No videos found in the presentation.", "urls": []}
-
-        # # Step 3: Upload videos to S3 and generate presigned URLs
-        presigned_urls = []
-        for video in extracted_videos:
-            s3_key = f"videos/{os.path.basename(video)}"
-            presigned_url = upload_to_s3(video, s3_key)
-            presigned_urls.append(presigned_url)
-
-        return {"message": "Videos extracted and uploaded successfully.", "urls": presigned_urls}
-
-    finally:
-        # Clean up temporary files and directories
-        if os.path.exists(file_path):
-            os.remove(file_path)
-        if os.path.exists(output_dir):
+    # Make sure path does not exist, could exist if an error occured and didnt cleanup
+    if os.path.exists(output_dir):
             subprocess.run(["rm", "-rf", output_dir], check=False)
+
+    # Step 1: Convert the PowerPoint file to a ZIP-like structure using Unzip
+    convert_pptx_with_unzip(file_path, output_dir)
+
+    # Step 2: Extract videos from the converted directory
+    extracted_videos = extract_videos_from_directory(output_dir)
+    print("Extracted Videos", extracted_videos)
+
+    if not extracted_videos:
+        return {"message": "No videos found in the presentation.", "urls": []}
+
+    # # Step 3: Upload videos to S3 and generate presigned URLs
+    presigned_urls = []
+    for video in extracted_videos:
+        s3_key = f"videos/{os.path.basename(video)}"
+        presigned_url = upload_to_s3(video, s3_key)
+        presigned_urls.append(presigned_url)
+
+    # Make sure path does not exist after job is finished
+    if os.path.exists(output_dir):
+            subprocess.run(["rm", "-rf", output_dir], check=False)
+
+    return {"message": "Videos extracted and uploaded successfully.", "urls": presigned_urls}

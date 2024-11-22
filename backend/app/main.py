@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile, HTTPException, BackgroundTasks
-from video_extractor import extract_videos_task
+from video_extractor import extract_videos_task, convert_pptx_with_unzip
+import os
 
 app = FastAPI()
 
@@ -14,8 +15,11 @@ async def extract_videos(file: UploadFile):
     with open(temp_path, "wb") as f:
         content = await file.read()
         f.write(content)
-    
+
     # Queue the extraction task
-    # task_id = extract_videos_task.delay(temp_path)
-    task_id = extract_videos_task(temp_path)
-    return {"task_id": task_id}
+    videos = extract_videos_task(temp_path)
+
+    # Clean up temporary files and directories
+    if os.path.exists(temp_path):
+        os.remove(temp_path)
+    return {"task": videos}

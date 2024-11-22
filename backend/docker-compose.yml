@@ -16,4 +16,4 @@ services:
   redis:
     image: redis:6.2
     ports:
-      - "6342:6342"
+      - "6342:6379"
