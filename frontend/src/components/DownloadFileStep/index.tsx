@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import {PdfIcon} from "@/icons/PdfIcon";
+import {VideoIcon} from "@/icons/VideoIcon";
 import {CheckIcon} from "@/icons/CheckIcon";
 
 type DownloadFileStepProps = {
@@ -14,8 +14,8 @@ export const DownloadFileStep: FC<DownloadFileStepProps> = ({
   return (
     <div className="flex flex-col gap-4 rounded-xl bg-white p-6 shadow-md">
       <div className="flex w-full items-center flex-col gap-1 rounded-lg border border-gray-300 p-4 text-center">
-        <PdfIcon />
-        <div className="mt-[-16px]">
+        <VideoIcon />
+        <div className="mt-[-20px]">
           <CheckIcon />
         </div>
         <p className="text-lg font-semibold text-gray-800">Videos extracted successfully!</p>
