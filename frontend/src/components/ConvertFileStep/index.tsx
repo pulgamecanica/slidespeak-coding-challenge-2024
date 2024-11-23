@@ -29,8 +29,8 @@ export const ConvertFileStep: FC<ConvertFileStepProps> = ({
       });
 
       const result = await response.json();
-
       if (response.ok) {
+
         onConversionComplete(result.task.urls);
       } else {
         setErrorMessage(result.detail || 'An error occurred during conversion.');
