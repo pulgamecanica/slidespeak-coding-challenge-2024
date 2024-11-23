@@ -4,9 +4,6 @@ from celery import Celery
 import boto3
 from botocore.exceptions import NoCredentialsError
 
-# Redis Configuration
-REDIS_PORT = os.getenv("REDIS_PORT")
-
 # Setup Celery
 celery = Celery(
     "extract_videos_task",
