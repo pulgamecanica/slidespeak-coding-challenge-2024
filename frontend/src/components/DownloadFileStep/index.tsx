@@ -3,14 +3,14 @@ import {PdfIcon} from "@/icons/PdfIcon";
 import {CheckIcon} from "@/icons/CheckIcon";
 
 type DownloadFileStepProps = {
-  // TODO: Add the required props.
+  videoUrls: string[];
+  onConvertAgain: () => void;
 };
 
-export const DownloadFileStep: FC<DownloadFileStepProps> = () => {
-  const result = 'https://google.com';
-  const onConvertAgain = () => {
-  }
-
+export const DownloadFileStep: FC<DownloadFileStepProps> = ({
+  videoUrls,
+  onConvertAgain,
+}) => {
   return (
     <div className="flex flex-col gap-4 rounded-xl bg-white p-6 shadow-md">
       <div className="flex w-full items-center flex-col gap-1 rounded-lg border border-gray-300 p-4 text-center">
@@ -18,7 +18,7 @@ export const DownloadFileStep: FC<DownloadFileStepProps> = () => {
         <div className="mt-[-16px]">
           <CheckIcon />
         </div>
-        <p className="text-lg font-semibold text-gray-800">File converted successfully!</p>
+        <p className="text-lg font-semibold text-gray-800">Videos extracted successfully!</p>
       </div>
       <div className="flex w-full gap-3">
         <button
@@ -28,13 +28,16 @@ export const DownloadFileStep: FC<DownloadFileStepProps> = () => {
         >
           Convert another
         </button>
-        <a
-          href={result}
-          type="button"
-          className="flex w-full items-center justify-center rounded-lg border border-blue-600 bg-blue-600 px-4 py-2.5 font-semibold text-white shadow-sm disabled:cursor-not-allowed disabled:opacity-30"
-        >
-          Download file
-        </a>
+
+        <ul className="list-disc pl-5">
+          {videoUrls.map((url, index) => (
+            <li key={index}>
+              <a href={url} target="_blank" rel="noopener noreferrer">
+                Downliad Video {index + 1}
+              </a>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

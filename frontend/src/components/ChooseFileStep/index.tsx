@@ -1,12 +1,21 @@
-import { FC, useCallback } from 'react';
+import { FC } from 'react';
 import { useDropzone } from 'react-dropzone';
 import UploadIcon from '@/icons/UploadIcon';
 
 type ChooseFileStepProps = {
+  onFileSelect: (file: File) => void;
 };
 
-export const ChooseFileStep: FC<ChooseFileStepProps> = () => {
+export const ChooseFileStep: FC<ChooseFileStepProps> = ({ onFileSelect }) => {
   const { getRootProps, getInputProps } = useDropzone({
+    accept: {
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation': ['.pptx'],
+    },
+    onDrop: (acceptedFiles) => {
+      if (acceptedFiles.length > 0) {
+        onFileSelect(acceptedFiles[0]);
+      }
+    },
   });
 
   return (
@@ -22,7 +31,7 @@ export const ChooseFileStep: FC<ChooseFileStepProps> = () => {
           </div>
         </div>
         <p className="text-sm leading-8 text-gray-600">
-          Drag and drop a PowerPoint file to convert to PDF.
+          Drag and drop a PowerPoint file to convert.
         </p>
         <button
           type="button"
