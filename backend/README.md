@@ -79,7 +79,6 @@ backend/
 │   ├── __init__.py
 │   ├── main.py  # Entry point for FastAPI app
 │   ├── tasks.py # Logic for video extraction and S3 upload
-│   ├── celery_worker.py # Celery worker setup
 ├── requirements.txt
 ├── Dockerfile
 ├── docker-compose.yml
@@ -96,3 +95,22 @@ backend/
 - celery: Task queue system for parallel processing.
 - redis: Backend for Celery and message broker.
 - aiofiles: Asynchronous file I/O for FastAPI when saving uploaded files
+
+
+### CORS
+
+This is the current CORS setup:
+
+```py
+# main.py
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Allowed origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allowed HTTP methods
+    allow_headers=["*"],  # Allowed headers
+)
+```
+
+If you want to run in production or test it in your local network, you will need to change the configuration accordingly
