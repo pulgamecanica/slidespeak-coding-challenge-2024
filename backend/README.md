@@ -50,6 +50,13 @@ As seen here: https://github.com/SlideSpeak/image-extractor-cli/blob/30c5ad96ffb
 
 ***
 
+### Celery
+
+Celery is running on a docker container.
+You can use celery by implementing the decorator on the function you wish to queue.
+Then you should use `.delay` to trigger the celery queue which will return the task id.
+After that you can query the celery worker for the result, if any.
+
 ### Coding
 
 Now we know what the python script should look like.
@@ -61,9 +68,7 @@ Fast API route:
 	- file: file.pptx
 
 ##### NOTE:
-	I am happy :D !!!
-	I learnt something new!
-	How to make a test with postman when a post requires a named file parameter.
+	How to make a test with postman when a post requires a named file parameter?
 	You should go to postman and change the request to a post.
 	Then on the Body section choose form-data.
 	Then hover on the `Key` section and choose "File" on the dropdown.
