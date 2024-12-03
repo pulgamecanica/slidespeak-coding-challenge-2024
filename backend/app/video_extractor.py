@@ -64,6 +64,9 @@ def extract_videos_from_directory(input_dir):
         if os.path.splitext(file)[1].lower() in video_extensions:
             videos.append(os.path.join(input_dir, file))
 
+    if not videos:
+        raise RuntimeError("No video files found in the extracted directory.")
+
     return videos
 
 
@@ -95,28 +98,41 @@ def extract_videos_task(file_path):
     Celery task to extract videos from a PowerPoint file.
     """
     output_dir = f"{file_path.replace(' ', '')}_output"
-    # Make sure path does not exist, could exist if an error occured and didnt cleanup
-    if os.path.exists(output_dir):
+
+    try:
+        # Make sure path does not exist, could exist if an error occured and didnt cleanup
+        if os.path.exists(output_dir):
             subprocess.run(["rm", "-rf", output_dir], check=False)
 
-    # Step 1: Convert the PowerPoint file to a ZIP-like structure using Unzip
-    convert_pptx_with_unzip(file_path, output_dir)
+        # Step 1: Convert the PowerPoint file to a ZIP-like structure using Unzip
+        convert_pptx_with_unzip(file_path, output_dir)
 
-    # Step 2: Extract videos from the converted directory
-    extracted_videos = extract_videos_from_directory(output_dir)
+        # Step 2: Extract videos from the converted directory
+        extracted_videos = extract_videos_from_directory(output_dir)
 
-    if not extracted_videos:
-        return {"message": "No videos found in the presentation.", "urls": []}
+        if not extracted_videos:
+            return {"message": "No videos found in the presentation.", "urls": []}
 
-    # # Step 3: Upload videos to S3 and generate presigned URLs
-    presigned_urls = []
-    for video in extracted_videos:
-        s3_key = f"videos/{os.path.basename(video)}"
-        presigned_url = upload_to_s3(video, s3_key)
-        presigned_urls.append(presigned_url)
+        # # Step 3: Upload videos to S3 and generate presigned URLs
+        presigned_urls = []
+        for video in extracted_videos:
+            s3_key = f"videos/{os.path.basename(video)}"
+            presigned_url = upload_to_s3(video, s3_key)
+            presigned_urls.append(presigned_url)
 
-    # Make sure path does not exist after job is finished
-    if os.path.exists(output_dir):
-        subprocess.run(["rm", "-rf", output_dir, file_path], check=False)
+        return {"message": "Videos extracted and uploaded successfully.", "urls": presigned_urls}
 
-    return {"message": "Videos extracted and uploaded successfully.", "urls": presigned_urls}
+    except RuntimeError as e:
+        # Return a descriptive error message if a known error occurs
+        return {"error": str(e)}
+
+    except Exception as e:
+        # Catch unexpected errors
+        return {"error": f"An unexpected error occurred: {str(e)}"}
+
+    finally:
+        # Cleanup temporary files
+        if os.path.exists(output_dir):
+            subprocess.run(["rm", "-rf", output_dir], check=False)
+        if os.path.exists(file_path):
+            subprocess.run(["rm", "-rf", file_path], check=False)
