@@ -111,6 +111,7 @@ def extract_videos_task(file_path):
         # Step 2: Extract videos from the converted directory
         extracted_videos = extract_videos_from_directory(output_dir)
 
+
         if not extracted_videos:
             return {"message": "No videos found in the presentation.", "urls": []}
 
