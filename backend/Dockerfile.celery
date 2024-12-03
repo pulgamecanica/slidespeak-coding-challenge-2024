@@ -1,5 +1,7 @@
+# Base image
 FROM python:3.9-slim
 
+# Set working directory
 WORKDIR /app
 
 # Install system dependencies
@@ -15,11 +17,8 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install watchdog for auto-reloading
-RUN pip install watchdog[watchmedo]
-
 # Copy application code
 COPY ./app /app
 
-# Run Celery worker with watchdog
-CMD ["watchmedo", "auto-restart", "-d", ".", "-R", "-p", "*.py", "--debug-force-polling", "--", "celery", "-A", "video_extractor.celery", "worker", "--loglevel=info", "-c", "16"]
+# Set the default command to run Celery worker
+CMD ["celery", "-A", "video_extractor.celery", "worker", "--loglevel=info", "-c", "16"]
