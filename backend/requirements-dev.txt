@@ -1,0 +1,2 @@
+# Development-specific requirements
+watchdog[watchmedo]==6.0.0

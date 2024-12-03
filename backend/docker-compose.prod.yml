@@ -2,8 +2,8 @@ services:
   backend:
     build:
       context: .
-      dockerfile: Dev.Dockerfile
-    container_name: backend_dev
+      dockerfile: Dockerfile
+    container_name: backend_prod
     ports:
       - "8000:8000"
     depends_on:
@@ -18,24 +18,18 @@ services:
 
   redis:
     image: redis:6.2
-    container_name: redis_dev
+    container_name: redis_prod
     ports:
       - "6379:6379"
       
   celery_worker:
     build:
       context: .
-      dockerfile: Dev.Dockerfile.celery
-    container_name: celery_worker_dev
+      dockerfile: Dockerfile.celery
+    container_name: celery_worker_prod
     command: >
-      watchmedo auto-restart 
-      -d . 
-      -R 
-      -p '*.py' 
-      --debug-force-polling 
-      -- celery -A video_extractor.celery worker --loglevel=info -c 16
+      celery -A video_extractor.celery worker --loglevel=info -c 16
     volumes:
-      - ./app:/app # For development you do want to share this volume to get notified when the app changes
       - shared_tmp:/shared_tmp
     env_file: 
       - path: ".env"
