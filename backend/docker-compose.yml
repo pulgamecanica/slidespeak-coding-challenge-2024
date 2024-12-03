@@ -31,6 +31,9 @@ services:
       -- celery -A video_extractor.celery worker --loglevel=info -c 16
     volumes:
       - shared_tmp:/shared_tmp
+    env_file: 
+      - path: ".env"
+        required: true
     depends_on:
       - redis
 
