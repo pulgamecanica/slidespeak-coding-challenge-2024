@@ -24,7 +24,7 @@ export const ConvertFileStep: FC<ConvertFileStepProps> = ({
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch('http://localhost:8000/extract', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/extract`, {
         method: 'POST',
         body: formData,
       });
@@ -49,7 +49,7 @@ export const ConvertFileStep: FC<ConvertFileStepProps> = ({
 
     const poll = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/get-result/${taskId}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/get-result/${taskId}`);
         const result = await response.json();
 
         if (response.ok) {
