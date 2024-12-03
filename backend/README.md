@@ -2,11 +2,61 @@
 
 - Having Docker installed on your system.
 
-## Running the docker container
+## Running the docker containers
 
-```bash
-docker compose up --build
-```
+The project includes a `Makefile` to simplify common Docker Compose tasks. You can use the following commands to manage your development and production environments:
+
+### Available Commands
+
+| Command       | Description                                                                                 |
+|---------------|---------------------------------------------------------------------------------------------|
+| `make start`  | Starts the development environment using `docker-compose.yml`.                             |
+| `make build`  | Builds the Docker images and starts the development environment.                           |
+| `make detach` | Builds the Docker images, starts the development environment in detached mode (background). |
+| `make down`   | Stops and removes all containers, networks, and volumes defined in `docker-compose.yml`.   |
+| `make prod`   | Starts the production environment using `docker-compose.prod.yml`.                         |
+| `make prod-down` | Stops and removes all containers, networks, and volumes defined in `docker-compose.prod.yml`. |
+
+---
+
+### How to Use
+
+1. **Start Development Environment**:
+   - Run the following command to start your development environment:
+     ```bash
+     make start
+     ```
+   - This command will spin up the containers as defined in `docker-compose.yml`.
+
+2. **Build and Start Containers**:
+   - If you’ve made changes to your Dockerfile or dependencies, rebuild the containers with:
+     ```bash
+     make build
+     ```
+
+3. **Run in Detached Mode**:
+   - To run the containers in the background, use:
+     ```bash
+     make detach
+     ```
+
+4. **Shut Down the Environment**:
+   - To stop and clean up all containers, networks, and volumes, run:
+     ```bash
+     make down
+     ```
+
+5. **Start Production Environment**:
+   - Use this command to start the production environment defined in `docker-compose.prod.yml`:
+     ```bash
+     make prod
+     ```
+
+6. **Shut Down Production Environment**:
+   - To stop and clean up the production containers, use:
+     ```bash
+     make prod-down
+     ```
 
 ***
 
