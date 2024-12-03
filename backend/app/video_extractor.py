@@ -149,3 +149,5 @@ def extract_videos_task(file_path):
             shutil.rmtree(output_dir)
         if os.path.exists(file_path):
             os.remove(file_path)
+        if os.path.exists(zip_path):
+            os.remove(zip_path)
