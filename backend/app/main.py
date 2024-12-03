@@ -4,6 +4,7 @@ from video_extractor import extract_videos_task, celery
 from config import ALLOWED_ORIGINS, LOCAL_DOCUMENTS_DIR
 from celery.result import AsyncResult
 import os
+import uuid
 
 app = FastAPI()
 
@@ -23,7 +24,7 @@ async def extract_videos(file: UploadFile):
         raise HTTPException(status_code=400, detail="Invalid file type. Please upload a PowerPoint file.")
     
     # Save file temporarily
-    temp_path = f"/{LOCAL_DOCUMENTS_DIR}/{file.filename}"
+    temp_path = f"/{LOCAL_DOCUMENTS_DIR}/{uuid.uuid4()}_{file.filename}"
     with open(temp_path, "wb") as f:
         content = await file.read()
         f.write(content)
