@@ -152,6 +152,37 @@ backend/
 - aiofiles: Asynchronous file I/O for FastAPI when saving uploaded files
 
 
+## Zipping Videos for S3 Upload
+
+When multiple video files are extracted from the PowerPoint presentation, the project uses Python's `shutil.make_archive()` to create a compressed ZIP file for efficient storage and upload to S3.
+
+### How It Works
+
+1. **Single Video**:
+   - If only one video is found, it is uploaded directly to S3 without compression.
+   - The S3 link for the video is returned.
+
+2. **Multiple Videos**:
+   - If multiple videos are found, they are compressed into a single ZIP file using `shutil.make_archive()` before being uploaded to S3.
+   - The S3 link for the ZIP file is returned.
+
+3. **ZIP Creation**:
+   - The `shutil.make_archive()` function creates a standard ZIP file that is fully compatible with ZIP tools (e.g., Windows File Explorer, macOS Finder, `unzip` command).
+   - Compression ensures reduced file size for faster uploads and downloads.
+
+### Code Example
+
+Here’s how the ZIP archive is created in the project:
+
+```python
+shutil.make_archive(zip_path.replace(".zip", ""), "zip", output_dir)
+```
+
+- **`zip_path.replace(".zip", "")`**: Defines the name of the ZIP file without the `.zip` extension (automatically added by the function).
+- **`"zip"`**: Specifies the archive format (ZIP in this case).
+- **`output_dir`**: The directory containing the extracted video files to include in the ZIP.
+
+
 ### CORS
 
 This is the current CORS setup:
@@ -161,7 +192,7 @@ This is the current CORS setup:
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Allowed origins
+    allow_origins=[<List of allowed origins>],  # Allowed origins
     allow_credentials=True,
     allow_methods=["*"],  # Allowed HTTP methods
     allow_headers=["*"],  # Allowed headers
