@@ -9,13 +9,6 @@ from config import (
     SOFT_TIME_LIMIT, TIME_LIMIT, MAX_CONVERT_TRIES
 )
 
-import logging
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-logger.info(f"S3_BUCKET_NAME: {S3_BUCKET_NAME}")
-
 # Setup Celery
 celery = Celery(
     "video_extractor",
@@ -79,7 +72,6 @@ def upload_to_s3(file_path, s3_key):
     Upload a file to S3 and generate a presigned URL.
     """
     try:
-        logger.info(f"Uploading {file_path} to bucket {S3_BUCKET_NAME} with key {s3_key}")
         s3_client.upload_file(file_path, S3_BUCKET_NAME, s3_key)
         return s3_client.generate_presigned_url(
             "get_object",
@@ -112,7 +104,6 @@ def extract_videos_task(file_path):
 
     # Step 2: Extract videos from the converted directory
     extracted_videos = extract_videos_from_directory(output_dir)
-    print("Extracted Videos", extracted_videos)
 
     if not extracted_videos:
         return {"message": "No videos found in the presentation.", "urls": []}
@@ -126,8 +117,6 @@ def extract_videos_task(file_path):
 
     # Make sure path does not exist after job is finished
     if os.path.exists(output_dir):
-        subprocess.run(["rm", "-rf", output_dir], check=False)
-    if os.path.exists(file_path):
-        subprocess.run(["rm", "-rf", file_path], check=False)
+        subprocess.run(["rm", "-rf", output_dir, file_path], check=False)
 
     return {"message": "Videos extracted and uploaded successfully.", "urls": presigned_urls}
