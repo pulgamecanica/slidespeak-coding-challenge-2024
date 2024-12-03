@@ -7,12 +7,12 @@ import { DownloadFileStep } from '@/components/DownloadFileStep';
 
 export const PowerPointToPdfConverter: FC = () => {
   const [file, setFile] = useState<File | null>(null);
-  const [videoUrls, setVideoUrls] = useState<string[]>([]);
+  const [videoUrl, setVideoUrl] = useState<string>();
   const [currentStep, setCurrentStep] = useState<'choose' | 'convert' | 'download'>('choose');
 
   const reset = () => {
     setFile(null);
-    setVideoUrls([]);
+    setVideoUrl();
     setCurrentStep('choose');
   };
 
@@ -21,8 +21,8 @@ export const PowerPointToPdfConverter: FC = () => {
     setCurrentStep('convert');
   };
 
-  const handleConversionComplete = (urls: string[]) => {
-    setVideoUrls(urls);
+  const handleConversionComplete = (url: string) => {
+    setVideoUrl(url);
     setCurrentStep('download');
   };
 
@@ -37,7 +37,7 @@ export const PowerPointToPdfConverter: FC = () => {
         />
       )}
       {currentStep === 'download' && (
-        <DownloadFileStep onConvertAgain={reset} videoUrls={videoUrls} />
+        <DownloadFileStep onConvertAgain={reset} videoUrl={videoUrl} />
       )}
     </>
   );
