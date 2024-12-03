@@ -8,6 +8,7 @@ from config import (
     CELERY_BROKER_URL, CELERY_BACKEND_URL,
     SOFT_TIME_LIMIT, TIME_LIMIT, MAX_CONVERT_TRIES
 )
+import shutil
 
 # Setup Celery
 celery = Celery(
@@ -133,6 +134,6 @@ def extract_videos_task(file_path):
     finally:
         # Cleanup temporary files
         if os.path.exists(output_dir):
-            subprocess.run(["rm", "-rf", output_dir], check=False)
+            shutil.rmtree(output_dir)
         if os.path.exists(file_path):
-            subprocess.run(["rm", "-rf", file_path], check=False)
+            os.remove(file_path)
