@@ -1,22 +1,21 @@
 import os
 import subprocess
-from celery import Celery
 import boto3
+from celery import Celery
 from botocore.exceptions import NoCredentialsError
+from config import (
+    AWS_ACCESS_KEY, AWS_SECRET_KEY, S3_BUCKET_NAME, AWS_REGION,
+    CELERY_BROKER_URL, CELERY_BACKEND_URL,
+    SOFT_TIME_LIMIT, TIME_LIMIT, MAX_CONVERT_TRIES
+)
 
 # Setup Celery
 celery = Celery(
-    "extract_videos_task",
-    backend=f"redis://redis:6379/0",
-    broker="redis://redis:6379/0",
+    "video_extractor",
+    broker=CELERY_BROKER_URL,
+    backend=CELERY_BACKEND_URL,
 
 )
-
-# S3 Configuration
-AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY")
-AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
-S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
-AWS_REGION = os.getenv("AWS_REGION")
 
 # AWS S3 Client
 s3_client = boto3.client(
@@ -85,7 +84,12 @@ def upload_to_s3(file_path, s3_key):
         raise RuntimeError(f"Error uploading to S3: {e}")
 
 
-@celery.task
+@celery.task(
+    soft_time_limit=SOFT_TIME_LIMIT,
+    time_limit=TIME_LIMIT,
+    max_retries=MAX_CONVERT_TRIES,
+    priority=10,
+)
 def extract_videos_task(file_path):
     """
     Celery task to extract videos from a PowerPoint file.
@@ -100,7 +104,6 @@ def extract_videos_task(file_path):
 
     # Step 2: Extract videos from the converted directory
     extracted_videos = extract_videos_from_directory(output_dir)
-    print("Extracted Videos", extracted_videos)
 
     if not extracted_videos:
         return {"message": "No videos found in the presentation.", "urls": []}
@@ -114,6 +117,6 @@ def extract_videos_task(file_path):
 
     # Make sure path does not exist after job is finished
     if os.path.exists(output_dir):
-            subprocess.run(["rm", "-rf", output_dir], check=False)
+        subprocess.run(["rm", "-rf", output_dir, file_path], check=False)
 
     return {"message": "Videos extracted and uploaded successfully.", "urls": presigned_urls}
