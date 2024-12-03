@@ -28,12 +28,7 @@ services:
       dockerfile: Dockerfile.celery
     container_name: celery_worker_prod
     command: >
-      watchmedo auto-restart 
-      -d . 
-      -R 
-      -p '*.py' 
-      --debug-force-polling 
-      -- celery -A video_extractor.celery worker --loglevel=info -c 16
+      celery -A video_extractor.celery worker --loglevel=info -c 16
     volumes:
       - shared_tmp:/shared_tmp
     env_file: 
